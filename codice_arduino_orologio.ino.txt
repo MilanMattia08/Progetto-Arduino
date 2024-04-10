@@ -1,0 +1,58 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+int h = 12;
+int m = 0;
+int s = 0;
+int flag = 0;
+
+const int hs = A1; // Potenziometro per l'ora
+const int ms = A0; // Potenziometro per i minuti
+
+void setup() {
+  lcd.begin(16, 2);
+}
+
+void loop() {
+  // Leggi il valore dei potenziometri
+  int hour_pot_value = analogRead(hs);
+  int minute_pot_value = analogRead(ms);
+  
+  // Mappa i valori dei potenziometri nell'intervallo corretto per ore e minuti
+  h = map(hour_pot_value, 0, 1023, 1, 12);
+  m = map(minute_pot_value, 0, 1023, 0, 59);
+  
+  lcd.setCursor(0, 0);
+  s = s + 1;
+  lcd.print("  ORA:");
+  lcd.print(h);
+  lcd.print(":");
+  if (m < 10) lcd.print("0"); // Assicura che i minuti siano sempre mostrati su due cifre
+  lcd.print(m);
+  lcd.print(":");
+  if (s < 10) lcd.print("0"); // Assicura che i secondi siano sempre mostrati su due cifre
+  lcd.print(s);
+
+  if (flag < 12) lcd.print("AM");
+  if (flag == 12) lcd.print("PM");
+  if (flag > 12) lcd.print("PM");
+  if (flag == 24) flag = 0;
+
+  delay(1000);
+  lcd.clear();
+  if (s == 60) {
+    s = 0;
+    m = m + 1;
+  }
+  if (m == 60) {
+    m = 0;
+    h = h + 1;
+    flag = flag + 1;
+  }
+  if (h == 13) {
+    h = 1;
+  }
+  lcd.setCursor(0, 1);
+  lcd.print(" ROBOTICA :)");
+}
